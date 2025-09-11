@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Administración — Collector</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script defer src="js/scripts.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="logo">Tienda Gamer — Admin</h1>
+      <nav aria-label="Menú principal">
+        <ul class="nav-list">
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="about.html">Nosotros</a></li>
+          <li><a href="contacto.html">Contacto</a></li>
+          <li><a href="admin.html">Administración</a></li>
+        </ul>
+      </nav>
+      <div class="cart-indicator" aria-live="polite">Pedidos: <span id="cartCount">0</span></div>
+    </div>
+  </header>
+
+  <main class="container admin-layout">
+    <aside class="sidebar" aria-label="panel lateral">
+      <h3>Panel</h3>
+      <ul>
+        <li><a href="#pedidos" onclick="showPanel('pedidos')">Pedidos</a></li>
+        <li><a href="#productos" onclick="showPanel('productos')">Productos</a></li>
+      </ul>
+      <button onclick="clearAllOrders()" class="danger">Vaciar pedidos</button>
+    </aside>
+
+    <section id="panelContent" class="panel-content">
+      <h2 id="panelTitle">Pedidos</h2>
+      <div id="ordersContainer"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2025 Tienda Gamer — Panel Administrativo</p>
+    </div>
+  </footer>
+</body>
+</html>

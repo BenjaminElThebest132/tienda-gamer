@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Colector — Contacto / Pedidos</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script defer src="js/scripts.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="logo">Tienda Gamer</h1>
+      <nav aria-label="Menú principal">
+        <ul class="nav-list">
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="about.html">Nosotros</a></li>
+          <li><a href="contacto.html">Contacto</a></li>
+          <li><a href="admin.html">Administración</a></li>
+        </ul>
+      </nav>
+      <div class="cart-indicator" aria-live="polite">Pedidos: <span id="cartCount">0</span></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <h2>Realiza tu pedido</h2>
+
+    <form id="contactForm" novalidate>
+      <label for="name">Nombre completo</label>
+      <input id="name" name="name" type="text" placeholder="Juan Gamer" autocomplete="name" required>
+      <span class="error" id="errorName" aria-live="polite"></span>
+
+      <label for="email">Correo electrónico</label>
+      <input id="email" name="email" type="email" placeholder="correo@ejemplo.com" autocomplete="email" required>
+      <span class="error" id="errorEmail" aria-live="polite"></span>
+
+      <label for="platform">Plataforma</label>
+      <input list="platforms" id="platform" name="platform" placeholder="PC / PS5 / Xbox" autocomplete="off">
+      <datalist id="platforms">
+        <option value="PC"></option>
+        <option value="PS5"></option>
+        <option value="Xbox"></option>
+        <option value="Switch"></option>
+      </datalist>
+
+      <label for="product">Producto (juego)</label>
+      <select id="product" name="product" required>
+        <option value="">-- Selecciona juego --</option>
+        <option>Albion Online (Formato fisico)</option>
+        <option>League Of Legends (formato fisico)</option>
+        <option>Terraria</option>
+      </select>
+      <span class="error" id="errorProduct" aria-live="polite"></span>
+
+      <label for="quantity">Cantidad (unidades)</label>
+      <input id="quantity" name="quantity" type="number" min="1" max="10" value="1" required>
+      <span class="error" id="errorQuantity" aria-live="polite"></span>
+
+      <label for="city">Ciudad</label>
+      <input list="cities" id="city" name="city" autocomplete="address-level2" placeholder="Santiago">
+      <datalist id="cities">
+        <option value="Santiago"></option>
+        <option value="Valparaíso"></option>
+        <option value="Concepción"></option>
+      </datalist>
+
+      <label for="message">Mensaje (opcional)</label>
+      <textarea id="message" name="message" rows="4" minlength="10" placeholder="Detalles del pedido (opcional)"></textarea>
+      <span class="error" id="errorMessage" aria-live="polite"></span>
+
+      <label class="checkbox">
+        <input type="checkbox" id="terms" name="terms" required> Acepto términos y condiciones
+      </label>
+      <span class="error" id="errorTerms" aria-live="polite"></span>
+
+      <button type="submit">Enviar pedido</button>
+      <div id="formSuccess" class="success" aria-live="polite"></div>
+    </form>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2025 Tienda Gamer</p>
+    </div>
+  </footer>
+</body>
+</html>

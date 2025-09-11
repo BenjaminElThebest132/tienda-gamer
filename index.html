@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Collector — Inicio</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script defer src="js/scripts.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="logo">Tienda Online Collecionista</h1>
+      <nav aria-label="Menú principal">
+        <ul class="nav-list">
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="about.html">Nosotros</a></li>
+          <li><a href="contacto.html">Contacto</a></li>
+          <li><a href="admin.html">Administración</a></li>
+        </ul>
+      </nav>
+      <div class="cart-indicator" aria-live="polite">Pedidos: <span id="cartCount">0</span></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" style="text-align:center; padding:30px 0; background:url('https://images.unsplash.com/photo-1606813905622-23b8fa9b75b2?auto=format&fit=crop&w=1950&q=80') no-repeat center/cover; color:white; border-radius:10px;">
+      <h2>Bienvenido, gamer 🎮</h2>
+      <p>Los mejores juegos de aventura, carreras y supervivencia te esperan.</p>
+      <button id="toggleGames" style="display:inline-block; margin-top:15px; background:#e63946; color:white; padding:12px 24px; border-radius:8px; border:none; cursor:pointer;">Ver Juegos</button>
+    </section>
+
+    <section class="productos" aria-label="Juegos destacados">
+      <article class="card">
+        <img src="https://gamingtrend.com/content/images/2025/02/albiononlinefeat-png.webp" alt="Legend Quest">
+        <h3>Albion Online (Formato fisico)</h3>
+        <p>Albion online es un mmorpg no lineal en el que escribes tu propia historia sin limitarte a seguir un camino prefijado, explora un amplio mundo abierto con cinco biomas unicos, todo cuanto hagas tendra su repercusíon en el mundo, con su economia orientada al jugador de albion los jugadores crean...</p>
+        <button class="buy-btn" onclick="comprar('Albion Online (Formato fisico)')">Comprar</button>
+      </article>
+
+      <article class="card">
+        <img src="https://static1-es.millenium.gg/articles/9/29/62/9/@/136472-2-article_m-1.jpg" alt="Racer X">
+        <h3>League Of Legends (formato fisico)</h3>
+        <p>Droga basicamente, y alistar negro</p>
+        <button class="buy-btn" onclick="comprar('League Of Legends (formato fisico)')">Comprar</button>
+      </article>
+
+      <article class="card">
+        <img src="https://terraria.wiki.gg/es/images/f/fa/Terrarialogo.jpg?a82c4f" alt="Zombie World">
+        <h3>Terraria</h3>
+        <p>Minecraft pero mejor, no hay mas que decir</p>
+        <button class="buy-btn" onclick="comprar('Terraria')">Comprar</button>
+      </article>
+    </section>
+
+    <section class="video">
+      <h3>Trailer destacado</h3>
+      <div class="video-container">
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/1-juhH1V8Zk" title="Trailer de Tienda Gamer" frameborder="0" allowfullscreen></iframe>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container" style="display:flex; justify-content:space-between; align-items:center;">
+      <p>© 2025 Tienda Gamer — contacto: <a href="mailto:info@tiendagamer.cl" style="color:#e63946;">info@tiendagamer.cl</a></p>
+      <div>
+        <a href="#" style="margin:0 5px; color:#e63946;">Facebook</a>
+        <a href="#" style="margin:0 5px; color:#e63946;">Twitter</a>
+        <a href="#" style="margin:0 5px; color:#e63946;">Instagram</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
