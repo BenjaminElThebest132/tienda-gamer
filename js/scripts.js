@@ -1,18 +1,150 @@
 // ----------------- FUNCIONES DE CARRITO Y COMPRA -----------------
 window.comprar = function(productName){
-  localStorage.setItem('selectedProduct', productName);
   const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-  cart.push({product: productName, at: new Date().toISOString()});
+
+  const existing = cart.find(item => item.product === productName);
+  if(existing){
+    existing.quantity += 1;
+  } else {
+    cart.push({product: productName, quantity: 1, at: new Date().toISOString()});
+  }
+
   localStorage.setItem('cart', JSON.stringify(cart));
   updateCartCount();
-  location.href = 'contacto.html';
+  renderCart();
 };
 
 function updateCartCount(){
   const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-  const el = document.getElementById('cartCount');
-  if(el) el.textContent = cart.length;
+  const el = document.querySelectorAll('#cartCount');
+  el.forEach(span => span.textContent = cart.reduce((total, item) => total + item.quantity, 0));
 }
+
+// ----------------- MOSTRAR / OCULTAR CARRITO -----------------
+function renderCart(){
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  const container = document.getElementById('cartItems');
+  if(!container) return;
+
+  if(cart.length === 0){
+    container.innerHTML = '<p>El carrito está vacío 🛒</p>';
+    return;
+  }
+
+  let html = '<ul style="list-style:none; padding:0;">';
+  cart.forEach((item, index) => {
+    html += `<li style="margin-bottom:10px;">
+      ${item.product} x ${item.quantity} 
+      <button onclick="changeQuantity(${index},1)">➕</button> 
+      <button onclick="changeQuantity(${index},-1)">➖</button> 
+      <button onclick="removeItem(${index})">❌</button>
+    </li>`;
+  });
+  html += '</ul>';
+  html += `<button onclick="clearCart()" style="margin-top:10px; padding:5px 10px;">Vaciar Carrito</button>`;
+
+  container.innerHTML = html;
+}
+
+window.changeQuantity = function(index, delta){
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  if(!cart[index]) return;
+  cart[index].quantity += delta;
+  if(cart[index].quantity < 1) cart[index].quantity = 1;
+  localStorage.setItem('cart', JSON.stringify(cart));
+  updateCartCount();
+  renderCart();
+}
+
+window.removeItem = function(index){
+  const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  cart.splice(index,1);
+  localStorage.setItem('cart', JSON.stringify(cart));
+  updateCartCount();
+  renderCart();
+}
+
+window.clearCart = function(){
+  if(confirm('¿Vaciar todo el carrito? Esta acción no se puede deshacer.')){
+    localStorage.removeItem('cart');
+    updateCartCount();
+    renderCart();
+  }
+}
+
+// Abrir y cerrar carrito
+document.addEventListener('DOMContentLoaded', function(){
+  updateCartCount();
+  renderCart();
+
+  const openCartBtn = document.getElementById('openCartBtn');
+  const closeCartBtn = document.getElementById('closeCartBtn');
+  const cartSection = document.getElementById('cartSection');
+
+  if(openCartBtn && cartSection){
+    openCartBtn.addEventListener('click', () => cartSection.style.display = 'block');
+  }
+
+  if(closeCartBtn && cartSection){
+    closeCartBtn.addEventListener('click', () => cartSection.style.display = 'none');
+  }
+});
+
+// ----------------- LOGIN / SESIONES -----------------
+document.addEventListener('DOMContentLoaded', function(){
+  const role = localStorage.getItem('userRole');
+  const modal = document.getElementById('loginModal');
+  const adminMenuItem = document.getElementById('adminMenuItem');
+
+  let logoutBtn = document.getElementById('logoutBtn');
+  if(!logoutBtn){
+    logoutBtn = document.createElement('button');
+    logoutBtn.id = 'logoutBtn';
+    logoutBtn.textContent = 'Cerrar Sesión';
+    logoutBtn.style.marginLeft = '10px';
+    logoutBtn.style.padding = '5px 10px';
+    logoutBtn.style.cursor = 'pointer';
+    if(document.querySelector('.header-inner')) document.querySelector('.header-inner').appendChild(logoutBtn);
+  }
+
+  logoutBtn.addEventListener('click', () => {
+    localStorage.removeItem('userRole');
+    alert('Sesión cerrada');
+    location.reload();
+  });
+
+  if(!role){
+    modal.style.display = 'flex';
+    logoutBtn.style.display = 'none';
+  } else {
+    modal.style.display = 'none';
+    logoutBtn.style.display = 'inline-block';
+  }
+
+  if(adminMenuItem){
+    adminMenuItem.style.display = (role === 'admin') ? 'inline-block' : 'none';
+  }
+
+  const loginForm = document.getElementById('loginForm');
+  loginForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+
+    if(email === 'admin@tiendagamer.cl' && password === '1234'){
+      localStorage.setItem('userRole','admin');
+      if(adminMenuItem) adminMenuItem.style.display = 'inline-block';
+      logoutBtn.style.display = 'inline-block';
+      alert('Bienvenido Admin');
+    } else {
+      localStorage.setItem('userRole','cliente');
+      if(adminMenuItem) adminMenuItem.style.display = 'none';
+      logoutBtn.style.display = 'inline-block';
+      alert('Bienvenido Cliente');
+    }
+    modal.style.display = 'none';
+  });
+});
 
 // ----------------- ADMIN PANEL -----------------
 window.showPanel = function(panel){
@@ -184,66 +316,7 @@ function escapeHtml(str){
     .replace(/"/g, "&quot;");
 }
 
-// ----------------- LOGIN / SESIONES -----------------
-document.addEventListener('DOMContentLoaded', function(){
-  const role = localStorage.getItem('userRole');
-  const modal = document.getElementById('loginModal');
-  const adminMenuItem = document.getElementById('adminMenuItem');
-
-  // Crear botón de cerrar sesión
-  let logoutBtn = document.getElementById('logoutBtn');
-  if(!logoutBtn){
-    logoutBtn = document.createElement('button');
-    logoutBtn.id = 'logoutBtn';
-    logoutBtn.textContent = 'Cerrar Sesión';
-    logoutBtn.style.marginLeft = '10px';
-    logoutBtn.style.padding = '5px 10px';
-    logoutBtn.style.cursor = 'pointer';
-    if(document.querySelector('.header-inner')) document.querySelector('.header-inner').appendChild(logoutBtn);
-  }
-
-  logoutBtn.addEventListener('click', () => {
-    localStorage.removeItem('userRole');
-    alert('Sesión cerrada');
-    location.reload();
-  });
-
-  // Mostrar modal si no hay rol
-  if(!role){
-    modal.style.display = 'flex';
-    logoutBtn.style.display = 'none';
-  } else {
-    modal.style.display = 'none';
-    logoutBtn.style.display = 'inline-block';
-  }
-
-  // Mostrar u ocultar el botón admin según rol
-  if(adminMenuItem){
-    adminMenuItem.style.display = (role === 'admin') ? 'inline-block' : 'none';
-  }
-
-  const loginForm = document.getElementById('loginForm');
-  loginForm.addEventListener('submit', function(e){
-    e.preventDefault();
-    const email = document.getElementById('loginEmail').value.trim();
-    const password = document.getElementById('loginPassword').value.trim();
-
-    if(email === 'admin@tiendagamer.cl' && password === '1234'){
-      localStorage.setItem('userRole','admin');
-      if(adminMenuItem) adminMenuItem.style.display = 'inline-block';
-      logoutBtn.style.display = 'inline-block';
-      alert('Bienvenido Admin');
-    } else {
-      localStorage.setItem('userRole','cliente');
-      if(adminMenuItem) adminMenuItem.style.display = 'none';
-      logoutBtn.style.display = 'inline-block';
-      alert('Bienvenido Cliente');
-    }
-    modal.style.display = 'none';
-  });
-});
-
-// ----------------- VALIDACIÓN DE FORMULARIO DE CONTACTO -----------------
+// ----------------- FORMULARIO DE CONTACTO -----------------
 document.addEventListener('DOMContentLoaded', function(){
   const contactForm = document.getElementById('contactForm');
   if(!contactForm) return;
@@ -258,7 +331,6 @@ document.addEventListener('DOMContentLoaded', function(){
     const quantity = document.getElementById('quantity');
     const terms = document.getElementById('terms');
 
-    // Limpiar errores previos
     document.querySelectorAll('.error').forEach(el => el.textContent = '');
 
     if(!name.value.trim()){
@@ -290,7 +362,6 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     if(valid){
-      // Guardar pedido en localStorage
       const orders = JSON.parse(localStorage.getItem('orders') || '[]');
       const id = Date.now();
       orders.push({
@@ -307,7 +378,6 @@ document.addEventListener('DOMContentLoaded', function(){
       localStorage.setItem('orders', JSON.stringify(orders));
       updateCartCount();
 
-      // Limpiar form y mostrar mensaje
       contactForm.reset();
       document.getElementById('formSuccess').textContent = 'Pedido enviado correctamente 👍';
       setTimeout(() => document.getElementById('formSuccess').textContent = '', 5000);
@@ -315,11 +385,8 @@ document.addEventListener('DOMContentLoaded', function(){
   });
 });
 
-// ----------------- DOM CONTENT LOADED -----------------
+// ----------------- TOGGLE JUEGOS -----------------
 document.addEventListener('DOMContentLoaded', function(){
-  updateCartCount();
-
-  // ----------------- TOGGLE JUEGOS -----------------
   const toggleBtn = document.getElementById('toggleGames');
   const productsSection = document.getElementById('productosDiv');
   if(toggleBtn && productsSection){
