@@ -1,3 +1,4 @@
+// ----------------- FUNCIONES DE CARRITO Y COMPRA -----------------
 window.comprar = function(productName){
   localStorage.setItem('selectedProduct', productName);
   const cart = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -13,6 +14,7 @@ function updateCartCount(){
   if(el) el.textContent = cart.length;
 }
 
+// ----------------- ADMIN PANEL -----------------
 window.showPanel = function(panel){
   const title = document.getElementById('panelTitle');
   if(title) title.textContent = panel === 'productos' ? 'Productos' : 'Pedidos';
@@ -182,97 +184,165 @@ function escapeHtml(str){
     .replace(/"/g, "&quot;");
 }
 
-// VALIDACIÓN DEL FORMULARIO CONTACTO
+// ----------------- LOGIN / SESIONES -----------------
+document.addEventListener('DOMContentLoaded', function(){
+  const role = localStorage.getItem('userRole');
+  const modal = document.getElementById('loginModal');
+  const adminMenuItem = document.getElementById('adminMenuItem');
+
+  // Crear botón de cerrar sesión
+  let logoutBtn = document.getElementById('logoutBtn');
+  if(!logoutBtn){
+    logoutBtn = document.createElement('button');
+    logoutBtn.id = 'logoutBtn';
+    logoutBtn.textContent = 'Cerrar Sesión';
+    logoutBtn.style.marginLeft = '10px';
+    logoutBtn.style.padding = '5px 10px';
+    logoutBtn.style.cursor = 'pointer';
+    if(document.querySelector('.header-inner')) document.querySelector('.header-inner').appendChild(logoutBtn);
+  }
+
+  logoutBtn.addEventListener('click', () => {
+    localStorage.removeItem('userRole');
+    alert('Sesión cerrada');
+    location.reload();
+  });
+
+  // Mostrar modal si no hay rol
+  if(!role){
+    modal.style.display = 'flex';
+    logoutBtn.style.display = 'none';
+  } else {
+    modal.style.display = 'none';
+    logoutBtn.style.display = 'inline-block';
+  }
+
+  // Mostrar u ocultar el botón admin según rol
+  if(adminMenuItem){
+    adminMenuItem.style.display = (role === 'admin') ? 'inline-block' : 'none';
+  }
+
+  const loginForm = document.getElementById('loginForm');
+  loginForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+
+    if(email === 'admin@tiendagamer.cl' && password === '1234'){
+      localStorage.setItem('userRole','admin');
+      if(adminMenuItem) adminMenuItem.style.display = 'inline-block';
+      logoutBtn.style.display = 'inline-block';
+      alert('Bienvenido Admin');
+    } else {
+      localStorage.setItem('userRole','cliente');
+      if(adminMenuItem) adminMenuItem.style.display = 'none';
+      logoutBtn.style.display = 'inline-block';
+      alert('Bienvenido Cliente');
+    }
+    modal.style.display = 'none';
+  });
+});
+
+// ----------------- VALIDACIÓN DE FORMULARIO DE CONTACTO -----------------
+document.addEventListener('DOMContentLoaded', function(){
+  const contactForm = document.getElementById('contactForm');
+  if(!contactForm) return;
+
+  contactForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    let valid = true;
+
+    const name = document.getElementById('name');
+    const email = document.getElementById('email');
+    const product = document.getElementById('product');
+    const quantity = document.getElementById('quantity');
+    const terms = document.getElementById('terms');
+
+    // Limpiar errores previos
+    document.querySelectorAll('.error').forEach(el => el.textContent = '');
+
+    if(!name.value.trim()){
+      document.getElementById('errorName').textContent = 'El nombre es obligatorio';
+      valid = false;
+    }
+
+    if(!email.value.trim()){
+      document.getElementById('errorEmail').textContent = 'El correo es obligatorio';
+      valid = false;
+    } else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)){
+      document.getElementById('errorEmail').textContent = 'El correo no es válido';
+      valid = false;
+    }
+
+    if(!product.value.trim()){
+      document.getElementById('errorProduct').textContent = 'Debes seleccionar un producto';
+      valid = false;
+    }
+
+    if(quantity.value < 1){
+      document.getElementById('errorQuantity').textContent = 'Cantidad mínima es 1';
+      valid = false;
+    }
+
+    if(!terms.checked){
+      document.getElementById('errorTerms').textContent = 'Debes aceptar los términos';
+      valid = false;
+    }
+
+    if(valid){
+      // Guardar pedido en localStorage
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      const id = Date.now();
+      orders.push({
+        id,
+        name: name.value.trim(),
+        email: email.value.trim(),
+        product: product.value.trim(),
+        quantity: parseInt(quantity.value),
+        platform: document.getElementById('platform').value.trim(),
+        city: document.getElementById('city').value.trim(),
+        message: document.getElementById('message').value.trim(),
+        date: new Date().toISOString()
+      });
+      localStorage.setItem('orders', JSON.stringify(orders));
+      updateCartCount();
+
+      // Limpiar form y mostrar mensaje
+      contactForm.reset();
+      document.getElementById('formSuccess').textContent = 'Pedido enviado correctamente 👍';
+      setTimeout(() => document.getElementById('formSuccess').textContent = '', 5000);
+    }
+  });
+});
+
+// ----------------- DOM CONTENT LOADED -----------------
 document.addEventListener('DOMContentLoaded', function(){
   updateCartCount();
 
-  // Prefill producto si viene de "Comprar"
-  const selected = localStorage.getItem('selectedProduct');
-  if(selected){
-    const selEl = document.getElementById('product');
-    if(selEl){
-      let found = false;
-      for(const opt of selEl.options){
-        if(opt.value === selected){ opt.selected = true; found = true; break; }
-      }
-      if(!found){
-        const option = document.createElement('option');
-        option.textContent = selected;
-        option.value = selected;
-        option.selected = true;
-        selEl.appendChild(option);
-      }
-    }
-    localStorage.removeItem('selectedProduct');
-  }
-
-  const form = document.getElementById('contactForm');
-  if(form){
-    form.addEventListener('submit', function(e){
-      e.preventDefault();
-      clearAllErrors();
-      document.getElementById('formSuccess').textContent = '';
-
-      const name = (document.getElementById('name') || {}).value?.trim() || '';
-      const email = (document.getElementById('email') || {}).value?.trim() || '';
-      const product = (document.getElementById('product') || {}).value || '';
-      const quantity = Number((document.getElementById('quantity') || {}).value || 0);
-      const platform = (document.getElementById('platform') || {}).value || '';
-      const city = (document.getElementById('city') || {}).value || '';
-      const message = (document.getElementById('message') || {}).value?.trim() || '';
-      const terms = !!(document.getElementById('terms') || {}).checked;
-
-      let valid = true;
-      if(name === ''){ setError('errorName','Ingresa tu nombre completo.'); valid = false; }
-      if(!validateEmail(email)){ setError('errorEmail','Correo inválido.'); valid = false; }
-      if(!product){ setError('errorProduct','Selecciona un producto.'); valid = false; }
-      if(!Number.isFinite(quantity) || quantity < 1){ setError('errorQuantity','La cantidad debe ser al menos 1.'); valid = false; }
-      if(message && message.length > 0 && message.length < 10){ setError('errorMessage','Si escribes un mensaje, mínimo 10 caracteres.'); valid = false; }
-      if(!terms){ setError('errorTerms','Acepta los términos y condiciones.'); valid = false; }
-
-      if(!valid) return;
-
-      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-      const order = { id: Date.now(), name, email, product, quantity, platform, city, message, date: new Date().toISOString() };
-      orders.push(order);
-      localStorage.setItem('orders', JSON.stringify(orders));
-
-      document.getElementById('formSuccess').textContent = 'Pedido registrado correctamente.';
-      form.reset();
-      updateCartCount();
-    });
-
-    form.querySelectorAll('input, textarea, select').forEach(el => {
-      el.addEventListener('input', function(){
-        const err = document.getElementById('error' + capitalize(el.id));
-        if(err) err.textContent = '';
-        const success = document.getElementById('formSuccess');
-        if(success) success.textContent = '';
-      });
-    });
-  }
-
-  if(document.location.pathname.endsWith('admin.html') || document.title.toLowerCase().includes('admin')){
-    renderOrders();
-  }
-
-  const toggleBtn = document.getElementById('toggleProductsBtn');
-  const productsDiv = document.getElementById('productosDiv');
-  if(toggleBtn && productsDiv){
-    toggleBtn.addEventListener('click', ()=>{
-      if(productsDiv.style.display === 'none'){
-        productsDiv.style.display = 'grid';
+  // ----------------- TOGGLE JUEGOS -----------------
+  const toggleBtn = document.getElementById('toggleGames');
+  const productsSection = document.getElementById('productosDiv');
+  if(toggleBtn && productsSection){
+    let visible = false;
+    productsSection.style.display = 'none';
+    toggleBtn.addEventListener('click', () => {
+      visible = !visible;
+      if(visible){
+        productsSection.style.display = 'grid';
+        setTimeout(() => {
+          productsSection.style.opacity = 1;
+          productsSection.style.transform = 'translateY(0)';
+        }, 50);
         toggleBtn.textContent = 'Ocultar Juegos';
       } else {
-        productsDiv.style.display = 'none';
+        productsSection.style.opacity = 0;
+        productsSection.style.transform = 'translateY(30px)';
+        setTimeout(() => productsSection.style.display = 'none', 500);
         toggleBtn.textContent = 'Ver Juegos';
       }
     });
-    productsDiv.style.display = 'none';
+    productsSection.style.opacity = 0;
+    productsSection.style.transform = 'translateY(30px)';
+    productsSection.style.transition = 'all 0.5s ease';
   }
 });
-
-function setError(id, msg){ const el = document.getElementById(id); if(el) el.textContent = msg; }
-function clearAllErrors(){ document.querySelectorAll('.error').forEach(e => e.textContent = ''); }
-function validateEmail(email){ const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; return re.test(email); }
-function capitalize(s){ if(!s) return ''; return s.charAt(0).toUpperCase() + s.slice(1); }

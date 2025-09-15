@@ -8,6 +8,19 @@
   <script defer src="js/scripts.js"></script>
 </head>
 <body>
+  <!-- MODAL LOGIN -->
+  <div id="loginModal" style="position:fixed; top:0; left:0; width:100%; height:100%; 
+       background:rgba(0,0,0,0.7); display:flex; justify-content:center; align-items:center; z-index:1000;">
+    <div style="background:rgb(53, 6, 6); padding:30px; border-radius:10px; width:300px; text-align:center;">
+      <h2>Iniciar Sesión</h2>
+      <form id="loginForm">
+        <input type="email" id="loginEmail" placeholder="Correo" required style="width:100%; margin-bottom:10px;">
+        <input type="password" id="loginPassword" placeholder="Contraseña" required style="width:100%; margin-bottom:20px;">
+        <button type="submit" style="padding:10px 20px;">Entrar</button>
+      </form>
+    </div>
+  </div>
+
   <header class="site-header">
     <div class="container header-inner">
       <h1 class="logo">Tienda Online Collecionista</h1>
@@ -16,7 +29,7 @@
           <li><a href="index.html">Inicio</a></li>
           <li><a href="about.html">Nosotros</a></li>
           <li><a href="contacto.html">Contacto</a></li>
-          <li><a href="admin.html">Administración</a></li>
+          <li id="adminMenuItem" style="display:none;"><a href="admin.html">Administración</a></li>
         </ul>
       </nav>
       <div class="cart-indicator" aria-live="polite">Pedidos: <span id="cartCount">0</span></div>
@@ -27,14 +40,15 @@
     <section class="hero" style="text-align:center; padding:30px 0; background:url('https://images.unsplash.com/photo-1606813905622-23b8fa9b75b2?auto=format&fit=crop&w=1950&q=80') no-repeat center/cover; color:white; border-radius:10px;">
       <h2>Bienvenido, gamer 🎮</h2>
       <p>Los mejores juegos de aventura, carreras y supervivencia te esperan.</p>
-      <button id="toggleGames" style="display:inline-block; margin-top:15px; background:#e63946; color:white; padding:12px 24px; border-radius:8px; border:none; cursor:pointer;">Ver Juegos</button>
+      <button id="toggleGames" style="display:inline-block; margin-top:15px; background:#e63946; color:rgb(69, 52, 52); padding:12px 24px; border-radius:8px; border:none; cursor:pointer;">Ver Juegos</button>
     </section>
 
-    <section class="productos" aria-label="Juegos destacados">
+    <!-- Productos -->
+    <section class="productos" id="productosDiv" aria-label="Juegos destacados" style="display:none;">
       <article class="card">
         <img src="https://gamingtrend.com/content/images/2025/02/albiononlinefeat-png.webp" alt="Legend Quest">
         <h3>Albion Online (Formato fisico)</h3>
-        <p>Albion online es un mmorpg no lineal en el que escribes tu propia historia sin limitarte a seguir un camino prefijado, explora un amplio mundo abierto con cinco biomas unicos, todo cuanto hagas tendra su repercusíon en el mundo, con su economia orientada al jugador de albion los jugadores crean...</p>
+        <p>Albion online es un mmorpg no lineal...</p>
         <button class="buy-btn" onclick="comprar('Albion Online (Formato fisico)')">Comprar</button>
       </article>
 

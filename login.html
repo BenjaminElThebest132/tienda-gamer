@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login — Tienda Gamer</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="logo">Tienda Gamer — Login</h1>
+      <nav aria-label="Menú principal">
+        <ul class="nav-list">
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="about.html">Nosotros</a></li>
+          <li><a href="contacto.html">Contacto</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container login-container">
+    <h2>Inicia sesión</h2>
+    <form id="loginForm" novalidate>
+      <label for="loginEmail">Correo electrónico</label>
+      <input type="email" id="loginEmail" placeholder="tu@correo.com" required>
+      <span class="error" id="errorLoginEmail" aria-live="polite"></span>
+
+      <label for="loginPassword">Contraseña</label>
+      <input type="password" id="loginPassword" placeholder="Contraseña" required>
+      <span class="error" id="errorLoginPass" aria-live="polite"></span>
+
+      <button type="submit">Iniciar sesión</button>
+      <div class="success" id="loginSuccess" aria-live="polite"></div>
+    </form>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2025 Tienda Gamer</p>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      const form = document.getElementById('loginForm');
+
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+
+        // Limpiar mensajes
+        document.getElementById('loginSuccess').textContent = '';
+        document.getElementById('errorLoginEmail').textContent = '';
+        document.getElementById('errorLoginPass').textContent = '';
+
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+
+        let valid = true;
+
+        if(!email){
+          document.getElementById('errorLoginEmail').textContent = 'Ingresa el correo.';
+          valid = false;
+        } else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+          document.getElementById('errorLoginEmail').textContent = 'Correo no válido.';
+          valid = false;
+        }
+
+        if(!password){
+          document.getElementById('errorLoginPass').textContent = 'Ingresa la contraseña.';
+          valid = false;
+        }
+
+        if(!valid) return;
+
+        // Admin hardcoded
+        const adminEmail = "admin@tiendagamer.cl";
+        const adminPass = "1234";
+
+        if(email === adminEmail && password === adminPass){
+          localStorage.setItem('userRole','admin');
+          document.getElementById('loginSuccess').textContent = 'Bienvenido Admin 😎';
+          setTimeout(() => window.location.href = "admin.html", 1000);
+        } else {
+          localStorage.setItem('userRole','cliente');
+          document.getElementById('loginSuccess').textContent = 'Bienvenido Cliente 👍';
+          setTimeout(() => window.location.href = "index.html", 1000);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
